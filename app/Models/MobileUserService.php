@@ -3,138 +3,211 @@
 namespace App\Models;
 
 
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use stdClass;
 
 class MobileUserService
 {
+    public function getAllUserNameAndMobile (): JsonResponse
+    {
+        try {
+            $mobile_users = MobileUser::all()->map(function ($mobile_user) {
+                return (object) [
+                    'user_name' => $mobile_user->user_name,
+                    'mobile_number' => $mobile_user->mobile_number
+                ];
+            });
+
+            return response()->json([
+                'data' => $mobile_users,
+                'description' => 'success'
+            ]);
+        }
+        catch (Exception $e) {
+            return response()->json([
+                "error" => "SERVER_ERROR",
+                "description" => $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function getUserByUserName ($user_name): JsonResponse
     {
-        $mobile_user = MobileUser::query()->where('user_name', '=', $user_name)->first();
+        try {
+            $mobile_user = MobileUser::query()->where('user_name', '=', $user_name)->first();
 
-        if ($mobile_user == null){
-            return response()->json([
-                "error" => "BAD_REQUEST",
-                "description" => "requested user not present"
-            ], 400);
+            if ($mobile_user == null){
+                return response()->json([
+                    "error" => "BAD_REQUEST",
+                    "description" => "requested user not present"
+                ], 400);
+            }
+            else {
+                return response()->json([
+                    "data" => $mobile_user,
+                    "description" => "success"
+                ]);
+            }
         }
-        else {
+        catch (Exception $e) {
             return response()->json([
-                "data" => $mobile_user,
-                "description" => "success"
-            ]);
+                "error" => "SERVER_ERROR",
+                "description" => $e->getMessage()
+            ], 500);
         }
     }
 
     public function getUserByEmail ($email): JsonResponse
     {
-        $mobile_user = MobileUser::query()->where('email', '=', $email)->first();
+        try {
+            $mobile_user = MobileUser::query()->where('email', '=', $email)->first();
 
-        if ($mobile_user == null){
-            return response()->json([
-                "error" => "BAD_REQUEST",
-                "description" => "requested user not present"
-            ], 400);
+            if ($mobile_user == null){
+                return response()->json([
+                    "error" => "BAD_REQUEST",
+                    "description" => "requested user not present"
+                ], 400);
+            }
+            else {
+                return response()->json([
+                    "data" => $mobile_user,
+                    "description" => "success"
+                ]);
+            }
         }
-        else {
+        catch (Exception $e) {
             return response()->json([
-                "data" => $mobile_user,
-                "description" => "success"
-            ]);
+                "error" => "SERVER_ERROR",
+                "description" => $e->getMessage()
+            ], 500);
         }
     }
 
     public function getUserByMobileNumber ($mobile_number): JsonResponse
     {
-        $mobile_user = MobileUser::query()->where('mobile_number', '=', $mobile_number)->first();
+        try {
+            $mobile_user = MobileUser::query()->where('mobile_number', '=', $mobile_number)->first();
 
-        if ($mobile_user == null){
-            return response()->json([
-                "error" => "BAD_REQUEST",
-                "description" => "requested user not present"
-            ], 400);
+            if ($mobile_user == null){
+                return response()->json([
+                    "error" => "BAD_REQUEST",
+                    "description" => "requested user not present"
+                ], 400);
+            }
+            else {
+                return response()->json([
+                    "data" => $mobile_user,
+                    "description" => "success"
+                ]);
+            }
         }
-        else {
+        catch (Exception $e) {
             return response()->json([
-                "data" => $mobile_user,
-                "description" => "success"
-            ]);
+                "error" => "SERVER_ERROR",
+                "description" => $e->getMessage()
+            ], 500);
         }
     }
 
     public function createMobileUser (Request $request): JsonResponse
     {
-        $mobile_user = MobileUser::query()->create([
-            'user_name' => $request->get('user_name'),
-            'mobile_number' => $request->get('mobile_number'),
-            'email' => $request->get('email')
-        ]);
-
-        if ($mobile_user == null){
-            return response()->json([
-                "error" => "SERVER_ERROR",
-                "description" => "db query failed"
-            ], 500);
-        }
-        else {
+        try {
+            $mobile_user = MobileUser::query()->create([
+                'user_name' => $request->get('user_name'),
+                'mobile_number' => $request->get('mobile_number'),
+                'email' => $request->get('email')
+            ]);
             return response()->json([
                 "data" => $mobile_user,
                 "description" => "success"
             ]);
         }
+        catch (Exception $e) {
+            return response()->json([
+                "error" => "SERVER_ERROR",
+                "description" => $e->getMessage()
+            ], 500);
+        }
     }
 
     public function deleteUserByUserName ($user_name): JsonResponse
     {
-        $id = MobileUser::query()->where('user_name', '=', $user_name)->delete();
+        try {
+            $id = MobileUser::query()->where('user_name', '=', $user_name)->delete();
 
-        if ($id == null){
+            if ($id == null){
+                return response()->json([
+                    "error" => "SERVER_ERROR",
+                    "description" => "db query failed"
+                ], 500);
+            }
+            else {
+                return response()->json([
+                    "data" => null,
+                    "description" => "success"
+                ]);
+            }
+        }
+        catch (Exception $e) {
             return response()->json([
                 "error" => "SERVER_ERROR",
-                "description" => "db query failed"
+                "description" => $e->getMessage()
             ], 500);
-        }
-        else {
-            return response()->json([
-                "data" => null,
-                "description" => "success"
-            ]);
         }
     }
 
     public function deleteUserByMobileNumber ($mobile_number): JsonResponse
     {
-        $id = MobileUser::query()->where('mobile_number', '=', $mobile_number)->delete();
+        try {
+            $id = MobileUser::query()->where('mobile_number', '=', $mobile_number)->delete();
 
-        if ($id == null){
+            if ($id == null){
+                return response()->json([
+                    "error" => "SERVER_ERROR",
+                    "description" => "db query failed"
+                ], 500);
+            }
+            else {
+                return response()->json([
+                    "data" => null,
+                    "description" => "success"
+                ]);
+            }
+        }
+        catch (Exception $e) {
             return response()->json([
                 "error" => "SERVER_ERROR",
-                "description" => "db query failed"
+                "description" => $e->getMessage()
             ], 500);
-        }
-        else {
-            return response()->json([
-                "data" => null,
-                "description" => "success"
-            ]);
         }
     }
 
     public function deleteUserByEmail ($email): JsonResponse
     {
-        $id = MobileUser::query()->where('email', '=', $email)->delete();
+        try {
 
-        if ($id == null){
+            $id = MobileUser::query()->where('email', '=', $email)->delete();
+
+            if ($id == null){
+                return response()->json([
+                    "error" => "SERVER_ERROR",
+                    "description" => "db query failed"
+                ], 500);
+            }
+            else {
+                return response()->json([
+                    "data" => null,
+                    "description" => "success"
+                ]);
+            }
+        }
+        catch (Exception $e) {
             return response()->json([
                 "error" => "SERVER_ERROR",
-                "description" => "db query failed"
+                "description" => $e->getMessage()
             ], 500);
-        }
-        else {
-            return response()->json([
-                "data" => null,
-                "description" => "success"
-            ]);
         }
     }
 }
