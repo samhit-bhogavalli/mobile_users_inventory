@@ -5,16 +5,27 @@ namespace App\Models;
 
 use App\Exceptions\UserNotFoundException;
 use Exception;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use stdClass;
 
 class MobileUserService
 {
-    public function getAllUserNameAndMobile (): JsonResponse
+    public function getAllUserNameAndMobile (Request $request): JsonResponse
     {
         try {
-            $mobile_users = MobileUser::all()->map(function ($mobile_user) {
+            $offset = 0;
+            $limit = 10;
+            if ($request->query()){
+                if ($request->query->has('offset')){
+                    $offset = $request->query->get('offset');
+                }
+                if ($request->query->has('limit')){
+                    $limit = $request->query->get('limit');
+                }
+            }
+            $mobile_users = MobileUser::query()->offset($offset)->limit($limit)->get()->map(function ($mobile_user) {
                 return (object) [
                     'user_name' => $mobile_user->user_name,
                     'mobile_number' => $mobile_user->mobile_number
@@ -34,6 +45,9 @@ class MobileUserService
         }
     }
 
+    /**
+     * @throws UserNotFoundException
+     */
     public function getUserByUserName ($user_name): JsonResponse
     {
         try {
@@ -60,6 +74,9 @@ class MobileUserService
         }
     }
 
+    /**
+     * @throws UserNotFoundException
+     */
     public function getUserByEmail ($email): JsonResponse
     {
         try {
@@ -86,6 +103,9 @@ class MobileUserService
         }
     }
 
+    /**
+     * @throws UserNotFoundException
+     */
     public function getUserByMobileNumber ($mobile_number): JsonResponse
     {
         try {
@@ -125,6 +145,12 @@ class MobileUserService
                 "description" => "success"
             ]);
         }
+        catch (QueryException $queryException) {
+            return response()->json([
+                "error" => "BAD_REQUEST",
+                "description" => "one of the field in request are already used"
+            ], 400);
+        }
         catch (Exception $e) {
             return response()->json([
                 "error" => "SERVER_ERROR",
@@ -133,6 +159,9 @@ class MobileUserService
         }
     }
 
+    /**
+     * @throws UserNotFoundException
+     */
     public function deleteUserByUserName ($user_name): JsonResponse
     {
         try {
@@ -159,6 +188,9 @@ class MobileUserService
         }
     }
 
+    /**
+     * @throws UserNotFoundException
+     */
     public function deleteUserByMobileNumber ($mobile_number): JsonResponse
     {
         try {
@@ -185,6 +217,9 @@ class MobileUserService
         }
     }
 
+    /**
+     * @throws UserNotFoundException
+     */
     public function deleteUserByEmail ($email): JsonResponse
     {
         try {

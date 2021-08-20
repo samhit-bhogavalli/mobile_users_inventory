@@ -17,9 +17,9 @@ class MobileUserController extends Controller
         $this->mobile_user_service = $mobile_user_service;
     }
 
-    public function getAllUserNameAndMobile(): JsonResponse
+    public function getAllUserNameAndMobile(Request $request): JsonResponse
     {
-        return $this->mobile_user_service->getAllUserNameAndMobile();
+        return $this->mobile_user_service->getAllUserNameAndMobile($request);
     }
 
     public function createMobileUser (Request $request): JsonResponse
