@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\InputWrongFormatException;
 use App\Models\MobileUserService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -38,16 +39,16 @@ class MobileUserController extends Controller
         return $this->mobile_user_service->createMobileUser($request);
     }
 
+    /**
+     * @throws InputWrongFormatException
+     */
     public function getUserByMobileNumber ($mobile_number): JsonResponse
     {
         $validator = Validator::make(['data' => $mobile_number], [
             'data' => 'size:10'
         ]);
         if ($validator->fails()) {
-            return response()->json([
-                'error' => 'BAD_REQUEST',
-                'description' => 'input is given in wrong format'
-            ], 400);
+            throw new InputWrongFormatException("given input is in wrong format");
         }
         return $this->mobile_user_service->getUserByMobileNumber($mobile_number);
     }
@@ -58,10 +59,7 @@ class MobileUserController extends Controller
             'data' => 'regex:/^.+@.+$/i'
         ]);
         if ($validator->fails()) {
-            return response()->json([
-                'error' => 'BAD_REQUEST',
-                'description' => 'input is given in wrong format'
-            ], 400);
+            throw new InputWrongFormatException("given input is in wrong format");
         }
         return $this->mobile_user_service->getUserByEmail($email);
     }
@@ -72,10 +70,7 @@ class MobileUserController extends Controller
             'data' => 'required'
         ]);
         if ($validator->fails()) {
-            return response()->json([
-                'error' => 'BAD_REQUEST',
-                'description' => 'input is given in wrong format'
-            ], 400);
+            throw new InputWrongFormatException("given input is in wrong format");
         }
         return $this->mobile_user_service->getUserByUserName($user_name);
     }
@@ -86,10 +81,7 @@ class MobileUserController extends Controller
             'data' => 'required'
         ]);
         if ($validator->fails()) {
-            return response()->json([
-                'error' => 'BAD_REQUEST',
-                'description' => 'input is given in wrong format'
-            ], 400);
+            throw new InputWrongFormatException("given input is in wrong format");
         }
         return $this->mobile_user_service->deleteUserByUserName($user_name);
     }
@@ -100,10 +92,7 @@ class MobileUserController extends Controller
             'data' => 'size:10'
         ]);
         if ($validator->fails()) {
-            return response()->json([
-                'error' => 'BAD_REQUEST',
-                'description' => 'input is given in wrong format'
-            ], 400);
+            throw new InputWrongFormatException("given input is in wrong format");
         }
         return $this->mobile_user_service->deleteUserByMobileNumber($mobile_number);
     }
@@ -114,10 +103,7 @@ class MobileUserController extends Controller
             'data' => 'regex:/^.+@.+$/i'
         ]);
         if ($validator->fails()) {
-            return response()->json([
-                'error' => 'BAD_REQUEST',
-                'description' => 'input is given in wrong format'
-            ], 400);
+            throw new InputWrongFormatException("given input is in wrong format");
         }
         return $this->mobile_user_service->deleteUserByEmail($email);
     }

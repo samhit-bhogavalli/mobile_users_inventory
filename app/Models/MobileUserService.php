@@ -3,6 +3,7 @@
 namespace App\Models;
 
 
+use App\Exceptions\UserNotFoundException;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -39,10 +40,7 @@ class MobileUserService
             $mobile_user = MobileUser::query()->where('user_name', '=', $user_name)->first();
 
             if ($mobile_user == null){
-                return response()->json([
-                    "error" => "BAD_REQUEST",
-                    "description" => "requested user not present"
-                ], 400);
+                throw new UserNotFoundException();
             }
             else {
                 return response()->json([
@@ -50,6 +48,9 @@ class MobileUserService
                     "description" => "success"
                 ]);
             }
+        }
+        catch (UserNotFoundException $e) {
+            throw $e;
         }
         catch (Exception $e) {
             return response()->json([
@@ -65,10 +66,7 @@ class MobileUserService
             $mobile_user = MobileUser::query()->where('email', '=', $email)->first();
 
             if ($mobile_user == null){
-                return response()->json([
-                    "error" => "BAD_REQUEST",
-                    "description" => "requested user not present"
-                ], 400);
+                throw new UserNotFoundException();
             }
             else {
                 return response()->json([
@@ -76,6 +74,9 @@ class MobileUserService
                     "description" => "success"
                 ]);
             }
+        }
+        catch (UserNotFoundException $e) {
+            throw $e;
         }
         catch (Exception $e) {
             return response()->json([
@@ -91,10 +92,7 @@ class MobileUserService
             $mobile_user = MobileUser::query()->where('mobile_number', '=', $mobile_number)->first();
 
             if ($mobile_user == null){
-                return response()->json([
-                    "error" => "BAD_REQUEST",
-                    "description" => "requested user not present"
-                ], 400);
+                throw new UserNotFoundException();
             }
             else {
                 return response()->json([
@@ -102,6 +100,9 @@ class MobileUserService
                     "description" => "success"
                 ]);
             }
+        }
+        catch (UserNotFoundException $e) {
+            throw $e;
         }
         catch (Exception $e) {
             return response()->json([
@@ -138,10 +139,7 @@ class MobileUserService
             $id = MobileUser::query()->where('user_name', '=', $user_name)->delete();
 
             if ($id == null){
-                return response()->json([
-                    "error" => "SERVER_ERROR",
-                    "description" => "db query failed"
-                ], 500);
+                throw new UserNotFoundException();
             }
             else {
                 return response()->json([
@@ -149,6 +147,9 @@ class MobileUserService
                     "description" => "success"
                 ]);
             }
+        }
+        catch (UserNotFoundException $e) {
+            throw $e;
         }
         catch (Exception $e) {
             return response()->json([
@@ -164,10 +165,7 @@ class MobileUserService
             $id = MobileUser::query()->where('mobile_number', '=', $mobile_number)->delete();
 
             if ($id == null){
-                return response()->json([
-                    "error" => "SERVER_ERROR",
-                    "description" => "db query failed"
-                ], 500);
+                throw new UserNotFoundException();
             }
             else {
                 return response()->json([
@@ -175,6 +173,9 @@ class MobileUserService
                     "description" => "success"
                 ]);
             }
+        }
+        catch (UserNotFoundException $e) {
+            throw $e;
         }
         catch (Exception $e) {
             return response()->json([
@@ -191,10 +192,7 @@ class MobileUserService
             $id = MobileUser::query()->where('email', '=', $email)->delete();
 
             if ($id == null){
-                return response()->json([
-                    "error" => "SERVER_ERROR",
-                    "description" => "db query failed"
-                ], 500);
+                throw new UserNotFoundException();
             }
             else {
                 return response()->json([
@@ -202,6 +200,9 @@ class MobileUserService
                     "description" => "success"
                 ]);
             }
+        }
+        catch (UserNotFoundException $e) {
+            throw $e;
         }
         catch (Exception $e) {
             return response()->json([
