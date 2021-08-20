@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\InputWrongFormatException;
+use App\Exceptions\UserNotFoundException;
 use App\Models\MobileUserService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -22,6 +23,9 @@ class MobileUserController extends Controller
         return $this->mobile_user_service->getAllUserNameAndMobile($request);
     }
 
+    /**
+     * @throws InputWrongFormatException
+     */
     public function createMobileUser (Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
@@ -30,10 +34,7 @@ class MobileUserController extends Controller
             'email' => 'regex:/^.+@.+$/i'
         ]);
         if ($validator->fails()) {
-            return response()->json([
-                'error' => 'BAD_REQUEST',
-                'description' => 'input is given in wrong format'
-            ], 400);
+            throw new InputWrongFormatException("given input is in wrong format");
         }
 
         return $this->mobile_user_service->createMobileUser($request);
@@ -41,6 +42,7 @@ class MobileUserController extends Controller
 
     /**
      * @throws InputWrongFormatException
+     * @throws UserNotFoundException
      */
     public function getUserByMobileNumber ($mobile_number): JsonResponse
     {
@@ -53,6 +55,10 @@ class MobileUserController extends Controller
         return $this->mobile_user_service->getUserByMobileNumber($mobile_number);
     }
 
+    /**
+     * @throws InputWrongFormatException
+     * @throws UserNotFoundException
+     */
     public function getUserByEmail ($email): JsonResponse
     {
         $validator = Validator::make(['data' => $email], [
@@ -64,6 +70,10 @@ class MobileUserController extends Controller
         return $this->mobile_user_service->getUserByEmail($email);
     }
 
+    /**
+     * @throws InputWrongFormatException
+     * @throws UserNotFoundException
+     */
     public function getUserByUserName ($user_name): JsonResponse
     {
         $validator = Validator::make(['data' => $user_name], [
@@ -75,6 +85,10 @@ class MobileUserController extends Controller
         return $this->mobile_user_service->getUserByUserName($user_name);
     }
 
+    /**
+     * @throws InputWrongFormatException
+     * @throws UserNotFoundException
+     */
     public function deleteUserByUserName ($user_name): JsonResponse
     {
         $validator = Validator::make(['data' => $user_name], [
@@ -86,6 +100,10 @@ class MobileUserController extends Controller
         return $this->mobile_user_service->deleteUserByUserName($user_name);
     }
 
+    /**
+     * @throws InputWrongFormatException
+     * @throws UserNotFoundException
+     */
     public function deleteUserByMobileNumber ($mobile_number): JsonResponse
     {
         $validator = Validator::make(['data' => $mobile_number], [
@@ -97,6 +115,10 @@ class MobileUserController extends Controller
         return $this->mobile_user_service->deleteUserByMobileNumber($mobile_number);
     }
 
+    /**
+     * @throws InputWrongFormatException
+     * @throws UserNotFoundException
+     */
     public function deleteUserByEmail ($email): JsonResponse
     {
         $validator = Validator::make(['data' => $email], [
