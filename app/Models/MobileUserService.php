@@ -97,69 +97,37 @@ class MobileUserService
     /**
      * @throws UserNotFoundException
      */
-    public function deleteUserByUserName ($user_name): JsonResponse
+    public function deleteUser (Request $request): JsonResponse
     {
         try {
-            $id = MobileUser::query()->where('user_name', '=', $user_name)->delete();
-
-            if ($id == null){
-                throw new UserNotFoundException();
+            $mobile_user = new MobileUser();
+            $conditions = [];
+            $rules = [
+                'user_name' => 'required|min:1|max:20',
+                'mobile_number' => 'required|size:10',
+                'email' => 'required|regex:/^.+@.+$/i'
+            ];
+            $flag = false;
+            if ($request->query()){
+                foreach ($request->query() as $key => $value) {
+                    foreach ($mobile_user->getTableColumns() as $val) {
+                        if ($key == $val) {
+                            $validator = Validator::make([$key => $value], [$key => $rules[$key]]);
+                            if ($validator->fails()){
+                                throw new InputWrongFormatException($validator->errors());
+                            }
+                            $flag = true;
+                            array_push($conditions, [$key, '=', $value]);
+                        }
+                    }
+                }
             }
-            else {
-                return response()->json([
-                    "data" => null,
-                    "description" => "success"
-                ]);
+
+            if (!$flag) {
+                throw new InputWrongFormatException("give atleast one valid on condition");
             }
-        }
-        catch (UserNotFoundException $e) {
-            throw $e;
-        }
-        catch (Exception $e) {
-            return response()->json([
-                "error" => "SERVER_ERROR",
-                "description" => $e->getMessage()
-            ], 500);
-        }
-    }
 
-    /**
-     * @throws UserNotFoundException
-     */
-    public function deleteUserByMobileNumber ($mobile_number): JsonResponse
-    {
-        try {
-            $id = MobileUser::query()->where('mobile_number', '=', $mobile_number)->delete();
-
-            if ($id == null){
-                throw new UserNotFoundException();
-            }
-            else {
-                return response()->json([
-                    "data" => null,
-                    "description" => "success"
-                ]);
-            }
-        }
-        catch (UserNotFoundException $e) {
-            throw $e;
-        }
-        catch (Exception $e) {
-            return response()->json([
-                "error" => "SERVER_ERROR",
-                "description" => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    /**
-     * @throws UserNotFoundException
-     */
-    public function deleteUserByEmail ($email): JsonResponse
-    {
-        try {
-
-            $id = MobileUser::query()->where('email', '=', $email)->delete();
+            $id = MobileUser::query()->where($conditions)->delete();
 
             if ($id == null){
                 throw new UserNotFoundException();

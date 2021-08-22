@@ -23,8 +23,5 @@ Route::get('/users', [MobileUserController::class, 'getUserNameAndMobile']);
 
 Route::post('/users', [MobileUserController::class, 'createMobileUser']);
 
-Route::delete('/users/{user_name}/delete_by_user_name', [MobileUserController::class, 'deleteUserByUserName']);
+Route::delete('/users/delete', [MobileUserController::class, 'deleteUser']);
 
-Route::delete('/users/{mobile_number}/delete_by_mobile_number', [MobileUserController::class, 'deleteUserByMobileNumber']);
-
-Route::delete('/users/{email}/delete_by_email', [MobileUserController::class, 'deleteUserByEmail']);

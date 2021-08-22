@@ -41,47 +41,10 @@ class MobileUserController extends Controller
     }
 
     /**
-     * @throws InputWrongFormatException
      * @throws UserNotFoundException
      */
-    public function deleteUserByUserName ($user_name): JsonResponse
+    public function deleteUser (Request $request): JsonResponse
     {
-        $validator = Validator::make(['user_name' => $user_name], [
-            'data' => 'required|min:1|max:20'
-        ]);
-        if ($validator->fails()) {
-            throw new InputWrongFormatException($validator->errors());
-        }
-        return $this->mobile_user_service->deleteUserByUserName($user_name);
-    }
-
-    /**
-     * @throws InputWrongFormatException
-     * @throws UserNotFoundException
-     */
-    public function deleteUserByMobileNumber ($mobile_number): JsonResponse
-    {
-        $validator = Validator::make(['mobile_number' => $mobile_number], [
-            'data' => 'required|size:10'
-        ]);
-        if ($validator->fails()) {
-            throw new InputWrongFormatException($validator->errors());
-        }
-        return $this->mobile_user_service->deleteUserByMobileNumber($mobile_number);
-    }
-
-    /**
-     * @throws InputWrongFormatException
-     * @throws UserNotFoundException
-     */
-    public function deleteUserByEmail ($email): JsonResponse
-    {
-        $validator = Validator::make(['email' => $email], [
-            'data' => 'required|regex:/^.+@.+$/i'
-        ]);
-        if ($validator->fails()) {
-            throw new InputWrongFormatException($validator->errors());
-        }
-        return $this->mobile_user_service->deleteUserByEmail($email);
+        return $this->mobile_user_service->deleteUser($request);
     }
 }
