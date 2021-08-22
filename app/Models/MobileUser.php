@@ -14,4 +14,9 @@ class MobileUser extends Model
         'mobile_number',
         'email'
     ];
+
+    public function getTableColumns(): array
+    {
+        return $this->getConnection()->getSchemaBuilder()->getColumnListing($this->getTable());
+    }
 }

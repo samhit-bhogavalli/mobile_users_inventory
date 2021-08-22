@@ -3,20 +3,29 @@
 namespace App\Models;
 
 
+use App\Exceptions\InputWrongFormatException;
 use App\Exceptions\UserNotFoundException;
 use Exception;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use stdClass;
 
 class MobileUserService
 {
-    public function getAllUserNameAndMobile (Request $request): JsonResponse
+    public function getUserNameAndMobile (Request $request): JsonResponse
     {
         try {
             $offset = 0;
             $limit = 10;
+            $mobile_user = new MobileUser();
+            $conditions = [];
+            $rules = [
+                'user_name' => 'required|min:1|max:20',
+                'mobile_number' => 'required|size:10',
+                'email' => 'required|regex:/^.+@.+$/i'
+            ];
             if ($request->query()){
                 if ($request->query->has('offset')){
                     $offset = $request->query->get('offset');
@@ -24,8 +33,21 @@ class MobileUserService
                 if ($request->query->has('limit')){
                     $limit = $request->query->get('limit');
                 }
+                foreach ($request->query() as $key => $value) {
+                    if ($key != 'offset' && $key != 'limit') {
+                        foreach ($mobile_user->getTableColumns() as $val) {
+                            if ($key == $val) {
+                                $validator = Validator::make([$key => $value], [$key => $rules[$key]]);
+                                if ($validator->fails()){
+                                    throw new InputWrongFormatException($validator->errors());
+                                }
+                                array_push($conditions, [$key, '=', $value]);
+                            }
+                        }
+                    }
+                }
             }
-            $mobile_users = MobileUser::query()->offset($offset)->limit($limit)->get()->map(function ($mobile_user) {
+            $mobile_users = MobileUser::query()->where($conditions)->offset($offset)->limit($limit)->get()->map(function ($mobile_user) {
                 return (object) [
                     'user_name' => $mobile_user->user_name,
                     'mobile_number' => $mobile_user->mobile_number
@@ -36,93 +58,6 @@ class MobileUserService
                 'data' => $mobile_users,
                 'description' => 'success'
             ]);
-        }
-        catch (Exception $e) {
-            return response()->json([
-                "error" => "SERVER_ERROR",
-                "description" => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    /**
-     * @throws UserNotFoundException
-     */
-    public function getUserByUserName ($user_name): JsonResponse
-    {
-        try {
-            $mobile_user = MobileUser::query()->where('user_name', '=', $user_name)->first();
-
-            if ($mobile_user == null){
-                throw new UserNotFoundException();
-            }
-            else {
-                return response()->json([
-                    "data" => $mobile_user,
-                    "description" => "success"
-                ]);
-            }
-        }
-        catch (UserNotFoundException $e) {
-            throw $e;
-        }
-        catch (Exception $e) {
-            return response()->json([
-                "error" => "SERVER_ERROR",
-                "description" => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    /**
-     * @throws UserNotFoundException
-     */
-    public function getUserByEmail ($email): JsonResponse
-    {
-        try {
-            $mobile_user = MobileUser::query()->where('email', '=', $email)->first();
-
-            if ($mobile_user == null){
-                throw new UserNotFoundException();
-            }
-            else {
-                return response()->json([
-                    "data" => $mobile_user,
-                    "description" => "success"
-                ]);
-            }
-        }
-        catch (UserNotFoundException $e) {
-            throw $e;
-        }
-        catch (Exception $e) {
-            return response()->json([
-                "error" => "SERVER_ERROR",
-                "description" => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    /**
-     * @throws UserNotFoundException
-     */
-    public function getUserByMobileNumber ($mobile_number): JsonResponse
-    {
-        try {
-            $mobile_user = MobileUser::query()->where('mobile_number', '=', $mobile_number)->first();
-
-            if ($mobile_user == null){
-                throw new UserNotFoundException();
-            }
-            else {
-                return response()->json([
-                    "data" => $mobile_user,
-                    "description" => "success"
-                ]);
-            }
-        }
-        catch (UserNotFoundException $e) {
-            throw $e;
         }
         catch (Exception $e) {
             return response()->json([

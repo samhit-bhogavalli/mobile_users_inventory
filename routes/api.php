@@ -19,13 +19,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/users', [MobileUserController::class, 'getAllUserNameAndMobile']);
-
-Route::get('/users/{user_name}/by_user_name', [MobileUserController::class, 'getUserByUserName']);
-
-Route::get('/users/{email}/by_email', [MobileUserController::class, 'getUserByEmail']);
-
-Route::get('/users/{mobile_number}/by_mobile_number', [MobileUserController::class, 'getUserByMobileNumber']);
+Route::get('/users', [MobileUserController::class, 'getUserNameAndMobile']);
 
 Route::post('/users', [MobileUserController::class, 'createMobileUser']);
 

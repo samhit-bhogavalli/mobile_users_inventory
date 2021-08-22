@@ -18,9 +18,9 @@ class MobileUserController extends Controller
         $this->mobile_user_service = $mobile_user_service;
     }
 
-    public function getAllUserNameAndMobile(Request $request): JsonResponse
+    public function getUserNameAndMobile(Request $request): JsonResponse
     {
-        return $this->mobile_user_service->getAllUserNameAndMobile($request);
+        return $this->mobile_user_service->getUserNameAndMobile($request);
     }
 
     /**
@@ -34,7 +34,7 @@ class MobileUserController extends Controller
             'email' => 'required|regex:/^.+@.+$/i'
         ]);
         if ($validator->fails()) {
-            throw new InputWrongFormatException("given input is in wrong format");
+            throw new InputWrongFormatException($validator->errors());
         }
 
         return $this->mobile_user_service->createMobileUser($request);
@@ -44,58 +44,13 @@ class MobileUserController extends Controller
      * @throws InputWrongFormatException
      * @throws UserNotFoundException
      */
-    public function getUserByMobileNumber ($mobile_number): JsonResponse
-    {
-        $validator = Validator::make(['data' => $mobile_number], [
-            'data' => 'required|size:10'
-        ]);
-        if ($validator->fails()) {
-            throw new InputWrongFormatException("given input is in wrong format");
-        }
-        return $this->mobile_user_service->getUserByMobileNumber($mobile_number);
-    }
-
-    /**
-     * @throws InputWrongFormatException
-     * @throws UserNotFoundException
-     */
-    public function getUserByEmail ($email): JsonResponse
-    {
-        $validator = Validator::make(['data' => $email], [
-            'data' => 'required|regex:/^.+@.+$/i'
-        ]);
-        if ($validator->fails()) {
-            throw new InputWrongFormatException("given input is in wrong format");
-        }
-        return $this->mobile_user_service->getUserByEmail($email);
-    }
-
-    /**
-     * @throws InputWrongFormatException
-     * @throws UserNotFoundException
-     */
-    public function getUserByUserName ($user_name): JsonResponse
-    {
-        $validator = Validator::make(['data' => $user_name], [
-            'data' => 'required|min:1|max:20'
-        ]);
-        if ($validator->fails()) {
-            throw new InputWrongFormatException("given input is in wrong format");
-        }
-        return $this->mobile_user_service->getUserByUserName($user_name);
-    }
-
-    /**
-     * @throws InputWrongFormatException
-     * @throws UserNotFoundException
-     */
     public function deleteUserByUserName ($user_name): JsonResponse
     {
-        $validator = Validator::make(['data' => $user_name], [
+        $validator = Validator::make(['user_name' => $user_name], [
             'data' => 'required|min:1|max:20'
         ]);
         if ($validator->fails()) {
-            throw new InputWrongFormatException("given input is in wrong format");
+            throw new InputWrongFormatException($validator->errors());
         }
         return $this->mobile_user_service->deleteUserByUserName($user_name);
     }
@@ -106,11 +61,11 @@ class MobileUserController extends Controller
      */
     public function deleteUserByMobileNumber ($mobile_number): JsonResponse
     {
-        $validator = Validator::make(['data' => $mobile_number], [
+        $validator = Validator::make(['mobile_number' => $mobile_number], [
             'data' => 'required|size:10'
         ]);
         if ($validator->fails()) {
-            throw new InputWrongFormatException("given input is in wrong format");
+            throw new InputWrongFormatException($validator->errors());
         }
         return $this->mobile_user_service->deleteUserByMobileNumber($mobile_number);
     }
@@ -121,11 +76,11 @@ class MobileUserController extends Controller
      */
     public function deleteUserByEmail ($email): JsonResponse
     {
-        $validator = Validator::make(['data' => $email], [
+        $validator = Validator::make(['email' => $email], [
             'data' => 'required|regex:/^.+@.+$/i'
         ]);
         if ($validator->fails()) {
-            throw new InputWrongFormatException("given input is in wrong format");
+            throw new InputWrongFormatException($validator->errors());
         }
         return $this->mobile_user_service->deleteUserByEmail($email);
     }
